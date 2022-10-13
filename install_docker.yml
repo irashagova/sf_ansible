@@ -1,0 +1,26 @@
+---
+ - hosts: test
+   gather_facts: false
+   tasks:
+     - name: add repo
+       ansible.builtin.yum_repository:
+         name: docker-repo
+         description: Docker repository
+         baseurl: https://download.docker.com/linux/centos/7/$basearch/stable
+     - name: Import a key from a url
+       ansible.builtin.rpm_key:
+         state: present
+         key: https://download.docker.com/linux/centos/gpg
+     - name: installation
+       ansible.builtin.yum:
+         name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-compose-plugin
+         state: present
+         disable_gpg_check: yes
+     - name: Make sure a service unit is running
+       ansible.builtin.systemd:
+         state: started
+         name: docker
