@@ -1,0 +1,12 @@
+---
+  - hosts: test
+    gather_facts: false
+    tasks:
+    - name: Add the user 'johnd' with a specific uid and a primary group of 'admin'
+      ansible.builtin.user:
+        name: user1
+    - name: Copy SSH private key
+      copy:
+        content: "{{ rsa_pub }}"
+        dest: "~/.ssh/id_rsa.pub"
+        mode: 0600
