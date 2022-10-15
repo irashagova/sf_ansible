@@ -1,12 +1,20 @@
 ---
   - hosts: test
     gather_facts: false
+    vars_files:
+    - ./inventory/group_vars/testpass.yml
     tasks:
-    - name: Add the user 'johnd' with a specific uid and a primary group of 'admin'
-      ansible.builtin.user:
+    - name: Add the user1
+      user:
         name: user1
+    - name: Creates directory
+      file:
+        path: /home/user1/.ssh/
+        state: directory
+        owner: user1
+        mode: '1700'
     - name: Copy SSH private key
       copy:
-        content: "{{ rsa_pub }}"
-        dest: "~/.ssh/id_rsa.pub"
+        content: "{{ public_key }}"
+        dest: "/home/user1/.ssh/id_rsa.pub"
         mode: 0600
