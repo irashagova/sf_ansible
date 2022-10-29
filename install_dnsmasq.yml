@@ -1,0 +1,5 @@
+---
+- hosts: test
+  gather_facts: false
+  roles: 
+    - roles/dnsmasq
