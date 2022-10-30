@@ -1,0 +1,25 @@
+---
+  - hosts: test
+    gather_facts: false
+    vars_files:
+    - ./inventory/group_vars/users_list.yml
+    tasks:
+    - name: Ensure group "superusers" exists
+      group:
+        name: superusers
+        state: present
+    - name: Make sure group wheel (no psw) is in the sudoers configuration
+      lineinfile:
+        path: /etc/sudoers
+        state: present
+        regexp: '^%wheel'
+        line: "%wheel  ALL=(ALL)       NOPASSWD: ALL"
+      register: foo
+
+    - name: Add the users
+      user:
+        name: "{{ item.name }}"
+        #groups: "{{ item.groups }}"
+        state: present
+      with_items:
+        - "{{ internal_users }}"

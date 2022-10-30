@@ -1,0 +1,3 @@
+internal_users: 
+  - { name: user2, psw: "123", groups: [ superusers, wheel ] }
+  - { name: user3, psw: "123", groups: [ superusers, wheel ]}
