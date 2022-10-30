@@ -8,13 +8,13 @@
       group:
         name: superusers
         state: present
+
     - name: Make sure group wheel (no psw) is in the sudoers configuration
       lineinfile:
         path: /etc/sudoers
         state: present
         regexp: '^%wheel'
         line: "%wheel  ALL=(ALL)       NOPASSWD: ALL"
-      register: foo
 
     - name: Add the users
       user:
