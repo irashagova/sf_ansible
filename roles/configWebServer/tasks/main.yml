@@ -1,0 +1,65 @@
+- name: Enable remi php repo
+  lineinfile:
+    path: /etc/yum.repos.d/remi-php74.repo
+    state: present
+    regexp: '^enabled=1'
+    line: "enabled=1"
+
+- name: Add REMI repository
+  yum:
+    name: http://rpms.remirepo.net/enterprise/remi-release-7.rpm
+    state: present
+
+- name: install nginx
+  yum:
+    name:
+      - nginx
+    state: latest
+  notify: manage nginx service
+
+- name: permit traffic in default zone for https service
+  ansible.posix.firewalld:
+    service: http
+    permanent: yes
+    state: enabled
+
+
+- name: Install php, php-fpm
+  ansible.builtin.yum:
+    name:
+      - php
+      - php-fpm
+    enablerepo: 'remi-php74'
+  notify: manage php-fpm service
+
+- name: change user for php-fpm
+  lineinfile:
+    path: /etc/php-fpm.d/www.conf 
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  loop:
+    - { regexp: '^listen = (.*)$', line: 'listen = /var/run/php-fpm/php-fpm.sock' }
+    - { regexp: '^user = (.*)$', line: 'user = nginx' }
+    - { regexp: '^group = (.*)$', line: 'group = nginx' }
+    - { regexp: '^(.*)listen.group = (.*)$', line: 'listen.group = nginx' }
+    - { regexp: '^(.*)listen.owner = (.*)$', line: 'listen.owner = nginx' }
+  notify: manage php-fpm service
+
+- name: Copy nginx.conf
+  copy:
+    src: /etc/ansible/roles/configWebServer/files/nginx.conf
+    dest: /etc/nginx/nginx.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: manage nginx service
+
+- name: Copy index.php
+  copy:
+    src: /etc/ansible/roles/configWebServer/files/index.php
+    dest: /usr/share/nginx/html/index.php
+    owner: nginx
+    group: nginx
+    mode: '0644'
+  notify: manage nginx service
+

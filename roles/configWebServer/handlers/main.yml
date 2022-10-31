@@ -1,0 +1,11 @@
+---
+- name: manage nginx service
+  service:
+    name: nginx
+    state: restarted
+    enabled: yes
+- name: manage php-fpm service
+  service:
+    name: php-fpm
+    state: restarted
+    enabled: yes
