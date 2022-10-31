@@ -59,14 +59,13 @@
     path: /etc/nginx/ansible
     state: directory
     mode: '0755'
-  notify: manage nginx service
 
 - name: change document_root
   lineinfile:
     path: /etc/nginx/nginx.conf
     regexp: "\troot(.*)"
     line: "\troot   /opt/nginx/ansible;"
-  tags: fa
+  notify: manage nginx service
 
 - name: Copy index.php
   copy:
