@@ -1,0 +1,14 @@
+---
+- name: add user and generate key
+  user:
+      name: "{{ item }}"
+      generate_ssh_key: yes
+  with_items:
+    - "{{ usernames }}"
+- name: Set authorized key 
+  ansible.posix.authorized_key:
+    user: "{{ item }}"
+    state: present
+    key: "{{ lookup('file', '/home/{{ item }}/.ssh/id_rsa.pub') }}"
+  with_items:
+    - "{{ usernames }}"
