@@ -1,7 +1,0 @@
----
-- hosts: test
-  gather_facts: false
-  vars_files:
-  - roles/add_user/vars/main.yml
-  roles: 
-    - roles/add_user

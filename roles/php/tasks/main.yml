@@ -1,0 +1,31 @@
+- name: Enable remi php repo
+  lineinfile:
+    path: /etc/yum.repos.d/remi-php74.repo
+    state: present
+    regexp: '^enabled=1'
+    line: "enabled=1"
+
+- name: Add REMI repository
+  yum:
+    name: http://rpms.remirepo.net/enterprise/remi-release-7.rpm
+    state: present
+
+- name: Install php, php-fpm
+  ansible.builtin.yum:
+    name:
+      - php
+      - php-fpm
+    enablerepo: 'remi-php74'
+  notify: manage php-fpm service
+
+- name: change user for php-fpm
+  lineinfile:
+    path: /etc/php-fpm.d/www.conf 
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  loop:
+    - { regexp: '^user = (.*)$', line: 'user = {{ username }}' }
+    - { regexp: '^group = (.*)$', line: 'group = {{ username }}' }
+    - { regexp: '^(.*)listen.group = (.*)$', line: 'listen.group = {{ username }}' }
+    - { regexp: '^(.*)listen.owner = (.*)$', line: 'listen.owner = {{ username }}' }
+  notify: manage php-fpm service

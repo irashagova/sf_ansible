@@ -1,0 +1,9 @@
+---
+- hosts: test
+  gather_facts: false
+  vars:
+    username: exec-user
+  roles: 
+    - roles/add_user
+    - roles/http
+    - roles/php
