@@ -43,4 +43,12 @@
 ## db-[99:101]-node.example.com
 
 [test]
-localhost
+localhost[app]
+51.250.92.132
+84.252.128.56
+
+[database]
+130.193.51.5
+
+[web]
+130.193.51.5

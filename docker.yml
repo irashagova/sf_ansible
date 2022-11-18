@@ -1,0 +1,19 @@
+---
+ - hosts: app
+   gather_facts: True
+   become: True
+   become_method: sudo
+   tasks:
+     - name: Install docker
+       ansible.builtin.package:
+         name:
+          - docker-ce 
+          - docker-ce-cli
+          - containerd.io
+          - docker-compose-plugin
+         state: latest
+
+     - name: Make sure a service unit is running
+       ansible.builtin.systemd:
+         state: started
+         name: docker

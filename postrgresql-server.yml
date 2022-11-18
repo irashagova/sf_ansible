@@ -1,0 +1,36 @@
+---
+ - hosts: database
+   become: True
+   become_method: sudo
+   gather_facts: true
+   vars_files:
+      - ./inventory/group_vars/postgresql-server-vars.yml
+   tasks:
+   - name: Install the PostgreSQL server version "{{ version }}"
+     ansible.builtin.apt:
+       name: 
+         - postgresql-{{ version }}
+         - postgresql-contrib-{{ version }}
+       state: present
+   - name: Stop postgresql service
+     service:
+       name: postgresql@{{ version }}-main.service
+       state: stopped
+   - name: Create verify if data directory exist
+     file:
+       path: /opt/data
+       owner: postgres
+       group: postgres
+       state: directory
+       mode: '0700'
+   - name: change data directory
+     lineinfile:
+       path: /etc/postgresql/{{ version }}/main/postgresql.conf
+       regexp: 'data_directory(.*)/var/lib/postgresql/{{ version }}/main(.*)$'
+       line: "data_directory = '{{ data_directory }}'"
+   - name: Start postgresql service
+     service:
+       name: postgresql@{{ version }}-main.service
+       state: started
+
+
